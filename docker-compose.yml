@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    container_name: hbs-db
+    environment:
+      POSTGRES_DB: hbs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Kent12052@
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./hotelbookingsystem
+    container_name: hotel-booking-system-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/hbs
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Kent12052@
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
