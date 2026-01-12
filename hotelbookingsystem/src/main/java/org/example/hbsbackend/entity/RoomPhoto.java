@@ -1,5 +1,6 @@
 package org.example.hbsbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,8 @@ public class RoomPhoto {
     private Long id;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
     @Column(nullable = false)
     private byte[] data;
 

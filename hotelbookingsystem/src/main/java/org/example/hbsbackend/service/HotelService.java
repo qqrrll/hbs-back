@@ -1,6 +1,5 @@
 package org.example.hbsbackend.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.hbsbackend.dto.HotelCreateDTO;
 import org.example.hbsbackend.dto.HotelDTO;
@@ -9,6 +8,8 @@ import org.example.hbsbackend.entity.Hotel;
 import org.example.hbsbackend.repository.HotelRepository;
 import org.example.hbsbackend.repository.RoomRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class HotelService {
 
     // ===================== HOTELS =====================
 
+    @Transactional(readOnly = true)
     public List<HotelDTO> getAllHotels() {
         return hotelRepository.findAll()
                 .stream()
@@ -28,11 +30,13 @@ public class HotelService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public HotelDTO getHotelById(Long id) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Hotel not found"));
         return HotelDTO.convertToDTO(hotel);
     }
+
 
     @Transactional
     public HotelDTO createHotel(HotelCreateDTO dto) {
