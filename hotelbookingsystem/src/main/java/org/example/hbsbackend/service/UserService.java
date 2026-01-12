@@ -92,5 +92,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void changeRole(Long id, Role role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(role);
+    }
+
 
 }

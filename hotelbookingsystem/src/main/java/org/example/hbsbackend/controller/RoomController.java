@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.hbsbackend.dto.RoomCreateDTO;
 import org.example.hbsbackend.dto.RoomDTO;
 import org.example.hbsbackend.service.RoomService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,16 +26,19 @@ public class RoomController {
     }
 
     @PostMapping("/create-room")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDTO createRoom(@RequestBody RoomCreateDTO roomDTO) {
         return roomService.createRoom(roomDTO);
     }
 
     @PutMapping("update-room/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDTO updateRoom(@PathVariable Long id, @RequestBody RoomDTO roomDTO) {
         return roomService.updateRoom(id, roomDTO);
     }
 
     @DeleteMapping("delete-room/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
 

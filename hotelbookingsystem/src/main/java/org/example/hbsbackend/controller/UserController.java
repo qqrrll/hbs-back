@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.example.hbsbackend.dto.UserCreateDTO;
 import org.example.hbsbackend.dto.UserDTO;
+import org.example.hbsbackend.entity.Role;
 import org.example.hbsbackend.entity.User;
 import org.example.hbsbackend.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,5 +39,15 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/users/{id}/role")
+    public void changeRole(
+            @PathVariable Long id,
+            @RequestParam Role role
+    ) {
+        userService.changeRole(id, role);
+    }
+
 
 }
