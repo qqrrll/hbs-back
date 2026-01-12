@@ -4,6 +4,9 @@ spring:
     username: postgres
     password: Kent12052@
     driver-class-name: org.postgresql.Driver
+  profiles:
+    active: dev
+
   servlet:
     multipart:
       max-file-size: 5MB
@@ -11,20 +14,18 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+      ddl-auto: create
+    defer-datasource-initialization: true
     show-sql: true
+
+app:
+  admin:
+    email: admin@test.com
+    password: admin123
+    first-name: Admin
+    last-name: Root
+    phone: "+70000000000"
 
 jwt:
   secret: hbs-backend-super-secret-key-123456
   expiration-ms: 86400000
-
-springfox:
-  documentation:
-    swagger:
-      v2:
-        path: /api-docs
-
