@@ -37,37 +37,56 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingDTO createBooking(BookingCreateDTO bookingDTO){
+    public BookingDTO createBooking(BookingCreateDTO bookingDTO) {
+
         User user = userRepository.findById(bookingDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Room> rooms = roomRepository.findAllById(bookingDTO.getRoomIds());
-        if(rooms.isEmpty()){
-            throw new RuntimeException("Rooms not found");
-        }
-        for(Room room : rooms){
-            if(!isRoomAvailable(room.getId(), bookingDTO.getStartDate(), bookingDTO.getEndDate())){
-                throw new RuntimeException("Room " + room.getId() + " is not available");
-            }
-        }
-        Long days = ChronoUnit.DAYS.between(bookingDTO.getStartDate(), bookingDTO.getEndDate());
-        if (days <= 0){
-            throw new RuntimeException("Days must be greater than 0");
-        }
-        double totalPrice = 0;
-        for(Room room : rooms){
-            totalPrice += room.getPricePerNight();
-        }
-        totalPrice *= days;
-        for (Room room : rooms) {
-            Hotel hotel = room.getHotel();
 
+        List<Room> rooms = roomRepository.findAllById(bookingDTO.getRoomIds());
+
+        if (rooms.size() != bookingDTO.getRoomIds().size()) {
+            throw new RuntimeException("Some rooms not found");
         }
-        Hotel hotel = rooms.get(0).getHotel();
-        for(Room room : rooms){
-            if(!room.getHotel().getId().equals(hotel.getId())){
-                throw new RuntimeException("All rooms must be from the same hotel");
+
+        if (bookingDTO.getStartDate().isAfter(bookingDTO.getEndDate())) {
+            throw new RuntimeException("Start date must be before end date");
+        }
+
+        for (Room room : rooms) {
+            List<Booking> conflicts = bookingRepository.findOverlappingBookings(
+                    room.getId(),
+                    bookingDTO.getStartDate(),
+                    bookingDTO.getEndDate()
+            );
+
+            if (!conflicts.isEmpty()) {
+                throw new RuntimeException(
+                        "Номер " + room.getNumber() +
+                                " уже забронирован на выбранные даты"
+                );
             }
         }
+
+        long days = ChronoUnit.DAYS.between(
+                bookingDTO.getStartDate(),
+                bookingDTO.getEndDate()
+        );
+
+        if (days <= 0) {
+            throw new RuntimeException("Booking must be at least 1 day");
+        }
+
+        Hotel hotel = rooms.get(0).getHotel();
+
+        for (Room room : rooms) {
+            if (!room.getHotel().getId().equals(hotel.getId())) {
+                throw new RuntimeException("All rooms must belong to the same hotel");
+            }
+        }
+
+        double totalPrice = rooms.stream()
+                .mapToDouble(Room::getPricePerNight)
+                .sum() * days;
 
         Booking booking = new Booking();
         booking.setUser(user);
@@ -77,8 +96,10 @@ public class BookingService {
         booking.setStartDate(bookingDTO.getStartDate());
         booking.setEndDate(bookingDTO.getEndDate());
         booking.setTotalPrice(totalPrice);
+
         return BookingDTO.convertToDTO(bookingRepository.save(booking));
     }
+
     @Transactional
     public BookingDTO updateBooking(Long id, BookingDTO bookingDTO){
         Booking booking = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
