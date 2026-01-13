@@ -40,10 +40,20 @@ public class SecurityConfig {
 
                         // публичный просмотр
                         .requestMatchers(
+                                // отели
                                 "/api/hotel/get-all-hotel",
                                 "/api/hotel/get-hotel-by-id/**",
+
+                                // комнаты
+                                "/api/room/get-all-rooms",
+                                "/api/room/get-room-by-id/**",
+
+                                // фото
                                 "/api/hotels/photos/**",
-                                "/api/rooms/photos/**"
+                                "/api/rooms/photos/**",
+
+                                // ⭐ ОТЗЫВЫ
+                                "/api/review/**"
                         ).permitAll()
 
                         .anyRequest().authenticated()

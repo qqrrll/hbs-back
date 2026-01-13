@@ -1,4 +1,5 @@
 package org.example.hbsbackend.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class Review {
 
 /*    @Column(nullable = false)*/
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
@@ -31,9 +33,5 @@ public class Review {
 
     @Column(nullable = false)
     private String text;
-
-//    @ElementCollection
-//    private List<String> photos;
-
-    // Getters and Setters
+    
 }

@@ -33,6 +33,10 @@ public class ReviewService {
         return ReviewDTO.convertToDTO(reviewRepository.findById(id).get());
     }
 
+    public List<Review> getReviewsByHotelId(Long hotelId) {
+        return reviewRepository.findByHotelId(hotelId);
+    }
+
     public ReviewDTO createReview(ReviewCreateDTO reviewCreateDTO) {
         User user = userRepository.findById(reviewCreateDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         Hotel hotel = hotelRepository.findById(reviewCreateDTO.getHotelId()).orElseThrow(() -> new RuntimeException("Hotel not found"));
