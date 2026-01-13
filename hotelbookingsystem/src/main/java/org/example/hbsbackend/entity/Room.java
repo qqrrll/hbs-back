@@ -16,26 +16,28 @@ import java.util.List;
 @Entity
 @Table(name = "rooms")
 public class Room {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @Column(nullable = false)
     private String number;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private RoomLevel level; // VIP, STANDARD, ECONOMY
+    private RoomLevel level;
 
     @Column(nullable = false)
     private int beds;
+
     @Column(nullable = false)
     private boolean occupied;
+
     @Column(nullable = false)
     private double pricePerNight;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
@@ -44,7 +46,6 @@ public class Room {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"room", "data"})
     private List<RoomPhoto> photos = new ArrayList<>();
-
-    // Getters and Setters
 }

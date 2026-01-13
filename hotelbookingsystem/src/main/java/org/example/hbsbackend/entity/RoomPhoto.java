@@ -25,6 +25,7 @@ public class RoomPhoto {
     private String contentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "room_id")
     private Room room;
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "hotels")
 public class Hotel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,27 +30,30 @@ public class Hotel {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "hotel",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Room> rooms = new ArrayList<>();
 
     @Column(nullable = false)
-    private int roomCount; // Can be derived from rooms.size()
+    private int roomCount;
 
     @Column(nullable = false)
-    private boolean isOccupied; // True if all rooms occupied
+    private boolean occupied;
 
     @Column(nullable = false)
     private int stars;
 
     @Column(nullable = false)
-    private double rating; // Average from reviews
+    private double rating;
 
     @OneToMany(
             mappedBy = "hotel",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hotel", "data"})
     private List<HotelPhoto> photos = new ArrayList<>();
-
 }
